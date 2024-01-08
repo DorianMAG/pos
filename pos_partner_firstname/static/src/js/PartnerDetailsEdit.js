@@ -58,15 +58,11 @@ odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
                             title: _t("Both Customer First and Last Name Are Required"),
                         });
                     }
-                    if (
-                        (!this.props.partner.name && !processedChanges.name) ||
-                        processedChanges.name === ""
-                    ) {
-                        this.props.partner.name = this._update_partner_name(
-                            processedChanges.lastname,
-                            processedChanges.firstname
-                        );
-                    }
+                    this.changes.name = this._update_partner_name(
+                        processedChanges.lastname,
+                        processedChanges.firstname
+                    );
+                    processedChanges.name = this.changes.name;
                 } else if (checked) {
                     this.changes.lastname = this.changes.firstname = undefined;
                 }
