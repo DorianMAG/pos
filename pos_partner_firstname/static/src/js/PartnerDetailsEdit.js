@@ -1,19 +1,29 @@
 odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
     "use strict";
 
+    const { useState } = owl;
     const {_t} = require("web.core");
     const PartnerDetailsEdit = require("point_of_sale.PartnerDetailsEdit");
     const Registries = require("point_of_sale.Registries");
 
     const PosPartnerDetailsEdit = (PartnerDetailsEdit) =>
         class extends PartnerDetailsEdit {
+            setup() {
+                super.setup();
+                this.changes = useState({
+                    ...this.changes,
+                    firstname: this.props.partner.firstname || null,
+                    lastname: this.props.partner.lastname || null,
+                    is_company: this.props.partner.is_company || false,
+                });
+            }
             constructor() {
                 super(...arguments);
                 this.rpc({
                     model: "res.partner",
                     method: "get_names_order",
                     args: [],
-                }).then((res) => (this.partner_names_order = res || "last_first"));
+                }).then((res) => (this.partner_names_order = res || "last_first", (console.log(res))));
             }
             _update_partner_name(lastname, firstname) {
                 let name = null;
@@ -35,7 +45,7 @@ odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
                         processedChanges[key] = value;
                     }
                 }
-                const checked = $(".is_company").is(":checked");
+                const checked = this.changes.is_company;
                 if (!checked) {
                     if (
                         (!this.props.partner.firstname &&
@@ -57,39 +67,10 @@ odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
                             processedChanges.firstname
                         );
                     }
-                } else if (
-                    processedChanges.is_company &&
-                    (processedChanges.firstname || processedChanges.lastname)
-                ) {
+                } else if (checked) {
                     this.changes.lastname = this.changes.firstname = undefined;
                 }
-                super.saveChanges();
-            }
-            captureChange(event) {
-                super.captureChange(event);
-                if (event.target.name === "is_company") {
-                    const checked = event.currentTarget.checked;
-                    $(".is_person")
-                        .toArray()
-                        .forEach(function (el) {
-                            $(el).css("display", !checked ? "block" : "none");
-                        });
-
-                    this.changes[event.target.name] = checked;
-                    $(".client-name").attr("readonly", !checked);
-                    if (!checked) {
-                        const lastname = this.props.partner.lastname
-                            ? this.props.partner.lastname
-                            : "";
-                        const firstname = this.props.partner.firstname
-                            ? this.props.partner.firstname
-                            : "";
-                        this.props.partner.name = this._update_partner_name(
-                            lastname,
-                            firstname
-                        );
-                    }
-                }
+                super.saveChanges()
             }
         };
 
