@@ -1,7 +1,7 @@
 odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
     "use strict";
 
-    const { useState } = owl;
+    const {useState} = owl;
     const {_t} = require("web.core");
     const PartnerDetailsEdit = require("point_of_sale.PartnerDetailsEdit");
     const Registries = require("point_of_sale.Registries");
@@ -23,7 +23,7 @@ odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
                     model: "res.partner",
                     method: "get_names_order",
                     args: [],
-                }).then((res) => (this.partner_names_order = res || "last_first", (console.log(res))));
+                }).then((res) => (this.partner_names_order = res || "last_first"));
             }
             _update_partner_name(lastname, firstname) {
                 let name = null;
@@ -70,7 +70,7 @@ odoo.define("pos_partner_firstname.PartnerDetailsEdit", function (require) {
                 } else if (checked) {
                     this.changes.lastname = this.changes.firstname = undefined;
                 }
-                super.saveChanges()
+                super.saveChanges();
             }
         };
 
